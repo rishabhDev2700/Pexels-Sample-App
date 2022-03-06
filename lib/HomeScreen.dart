@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'Model.dart';
 
@@ -15,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final String _key =
       "563492ad6f91700001000001145c8b657a6a4c43ab00618da17373d7";
   List<Photo> photos = [];
+  TextEditingController controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +25,69 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text("Sample App"),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: photos.length,
-        itemBuilder: (BuildContext context, index) {
-          return Card(
-            child: Column(
-              children: [
-                Image(
-                  image: NetworkImage(photos[index].url),
+      drawer: Drawer(
+        child: Column(
+          children:  [
+            const DrawerHeader(child:Text("Drawer Header"),),
+            TextButton(onPressed:(){},child: const Text("Option",),),
+            TextButton(onPressed:(){},child: const Text("Option",),),
+            TextButton(onPressed:(){},child: const Text("Option",),),
+            TextButton(onPressed:(){},child: const Text("Option",),),
+          ],
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3.0,horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex:9,
+                      child: TextField(
+                        controller: controller,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextButton(
+                          onPressed: () {
+                            setState(() {});
+                          },
+                          child: const Icon(Icons.search)),
+                    ),
+                  ],
                 ),
-                Text(photos[index].photographer)
-              ],
+              ),
             ),
-          );
-        },
+            Expanded(
+              flex: 11,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: photos.length,
+                itemBuilder: (BuildContext context, index) {
+                  return Card(
+                    child: Column(
+                      children: [
+                        Image(
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                          image: NetworkImage(photos[index].url),
+                        ),
+                        Text(photos[index].photographer)
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
