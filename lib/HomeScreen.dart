@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'Model.dart';
 
@@ -27,12 +25,34 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       drawer: Drawer(
         child: Column(
-          children:  [
-            const DrawerHeader(child:Text("Drawer Header"),),
-            TextButton(onPressed:(){},child: const Text("Option",),),
-            TextButton(onPressed:(){},child: const Text("Option",),),
-            TextButton(onPressed:(){},child: const Text("Option",),),
-            TextButton(onPressed:(){},child: const Text("Option",),),
+          children: [
+            const DrawerHeader(
+              child: Text("Drawer Header"),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                "Option",
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                "Option",
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                "Option",
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text(
+                "Option",
+              ),
+            ),
           ],
         ),
       ),
@@ -43,12 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3.0,horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 3.0, horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      flex:9,
+                      flex: 9,
                       child: TextField(
                         controller: controller,
                       ),
@@ -57,7 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       flex: 1,
                       child: TextButton(
                           onPressed: () {
-                            setState(() {});
+                            searchData(controller.text);
+                            print(controller.text);
                           },
                           child: const Icon(Icons.search)),
                     ),
@@ -74,12 +96,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Card(
                     child: Column(
                       children: [
-                        Image(
-                          fit: BoxFit.cover,
-                          width: MediaQuery.of(context).size.width,
-                          image: NetworkImage(photos[index].url),
+                        GestureDetector(
+                          onTap: (){
+                            setState(() {});
+                          },
+                          child: Image(
+                            fit: BoxFit.cover,
+                            width: MediaQuery.of(context).size.width,
+                            image: NetworkImage(photos[index].url),
+                          ),
                         ),
-                        Text(photos[index].photographer)
+                        // Text(photos[index].photographer)
                       ],
                     ),
                   );
@@ -89,22 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            getData();
-          });
-        },
-        child: const Icon(Icons.refresh),
-      ),
     );
   }
 
   getData() async {
     await http.get(Uri.parse("https://api.pexels.com/v1/curated"),
         headers: {"Authorization": _key}).then((value) {
-      //print(value.body);
-
       Map<String, dynamic> jsonData = jsonDecode(value.body);
       jsonData["photos"].forEach((element) {
         //print(element);
@@ -114,6 +131,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {});
     });
+  }
+
+  searchData(String query) async {
+    List<Photo> newPhotos = [];
+    await http.get(Uri.parse("https://api.pexels.com/v1/search?query=$query"),
+        headers: {"Authorization": _key}).then((value) {
+      Map<String, dynamic> jsonData = jsonDecode(value.body);
+      jsonData['photos'].forEach((photoData) {
+        Photo photo = Photo.fromJson(photoData);
+        newPhotos.add(photo);
+      });
+    });
+    photos = newPhotos;
+    setState(() {});
   }
 
   @override
